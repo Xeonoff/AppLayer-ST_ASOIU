@@ -22,6 +22,7 @@ wss.on('connection', function connection(ws) {
       const username = data.username;
       connections[userId] = ws; 
       usersMap[userId] = username;
+      ws.send(JSON.stringify({ type: 'registered', id: userId, username }));
       return;
     }
 
@@ -35,7 +36,7 @@ wss.on('connection', function connection(ws) {
         time
       })
       .then(response => {
-        response.status();
+        ws.send(JSON.stringify({ type: 'sent', id: userId, username, text, time }));
       })
       .catch(error => {
         console.error('Error sending message:', error);
@@ -55,16 +56,26 @@ wss.on('connection', function connection(ws) {
     delete usersMap[userId];
   });
 });
+
 app.post('/receive', (req, res) => {
-    const { id, username, time, ...rest} = req.body;
+    const { id, username, time, text, error } = req.body;
     const ws = connections[id];
     if (ws) {
-        ws.send(JSON.stringify({
-          id,
-          username,
-          ...rest,
-          time,
-        }));
+        if (error) {
+          ws.send(JSON.stringify({
+            type: 'error',
+            message: error,
+            time,
+          }));
+        } else {
+          ws.send(JSON.stringify({
+            type: 'receive',
+            id,
+            username,
+            text,
+            time,
+          }));
+        }
         res.send({ status: 'success', message: 'Message sent to WebSocket client.' });
       } else {
         console.error('Attempt to send to unknown user ID:', id);
