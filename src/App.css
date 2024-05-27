@@ -1,7 +1,24 @@
 .App {
   text-align: center;
 }
-
+body{
+  overflow-x: hidden;
+  background: linear-gradient(315deg, rgb(156, 96, 96) 3%, rgb(151, 114, 114) 38%, rgb(193, 165, 165) 68%, rgb(212, 212, 212) 98%);
+  animation: gradient 20s ease infinite;
+  background-size: 400% 400%;
+  background-attachment: fixed;
+}
+@keyframes gradient {
+  0% {
+      background-position: 0% 0%;
+  }
+  50% {
+      background-position: 100% 100%;
+  }
+  100% {
+      background-position: 0% 0%;
+  }
+}
 .App-logo {
   height: 40vmin;
   pointer-events: none;
@@ -35,4 +52,12 @@
   to {
     transform: rotate(360deg);
   }
+}
+#Nav{
+  position: relative;
+  z-index: 1;
+}
+#UnderNav{
+  position: relative;
+  z-index: -1;
 }
